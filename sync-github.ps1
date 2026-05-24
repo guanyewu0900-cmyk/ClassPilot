@@ -13,7 +13,7 @@ if ([string]::IsNullOrWhiteSpace($RemoteUrl)) {
   if (-not [string]::IsNullOrWhiteSpace($env:CLASSPILOT_REMOTE_URL)) {
     $RemoteUrl = $env:CLASSPILOT_REMOTE_URL
   } else {
-    $RemoteUrl = "https://github.com/guanyewu0900-cmyk/classpilot.git"
+    $RemoteUrl = "git@github.com:guanyewu0900-cmyk/ClassPilot.git"
   }
 }
 $SafeRoot = $Root -replace "\\", "/"
@@ -145,7 +145,7 @@ if (-not $NoPull) {
   } elseif ($remoteCheck -eq 2) {
     Write-Host "Remote branch origin/$branch does not exist yet. Skipping pull."
   } else {
-    throw "Could not check origin/$branch. Please verify your GitHub login, network, or proxy settings."
+    Write-Host "Could not check origin/$branch before push. Skipping pull and continuing to push." -ForegroundColor Yellow
   }
 }
 
