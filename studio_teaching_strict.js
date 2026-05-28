@@ -1363,7 +1363,7 @@ async function renderPdfPageCanvas(playerEl, srcBase, page, maxHint = 1) {
 
 function ensureAiChatState(mode, moduleId) {
   const bag = aiChatBag(mode);
-  bag[moduleId] ||= { draft: "", history: [], sending: false, error: "" };
+  bag[moduleId] ||= { draft: "", history: [], sending: false, error: "", pendingQuestion: "" };
   return bag[moduleId];
 }
 
@@ -1372,14 +1372,26 @@ function renderAiAssistantPlayer(container, module, mode) {
   const chat = ensureAiChatState(mode, module.id);
   const canAsk = Boolean(cfg.systemPrompt || cfg.knowledge);
   const showContextMeta = mode !== "teaching";
-  const historyHtml = (chat.history || []).map((item) => `
-    <article class="quiz-question">
-      <div class="quiz-question-title">Question</div>
-      <div class="quiz-question-body">${escapeHtml(item.question || "")}</div>
-      <div class="quiz-question-title" style="margin-top:8px;">Answer</div>
-      <div class="quiz-question-body">${escapeHtml(item.answer || "")}</div>
+  const chatTurnHtml = (question, answer, pending = false) => `
+    <article class="ai-chat-turn">
+      <div class="ai-chat-message ai-chat-message-student">
+        <div class="ai-chat-avatar ai-chat-avatar-student" aria-hidden="true">S</div>
+        <div class="ai-chat-bubble">
+          <div class="ai-chat-name">Student</div>
+          <div class="ai-chat-text">${escapeHtml(question || "")}</div>
+        </div>
+      </div>
+      <div class="ai-chat-message ai-chat-message-assistant">
+        <div class="ai-chat-bubble">
+          <div class="ai-chat-name">AI Assistant</div>
+          <div class="ai-chat-text">${pending ? '<span class="ai-chat-typing">Answering...</span>' : escapeHtml(answer || "")}</div>
+        </div>
+        <div class="ai-chat-avatar ai-chat-avatar-assistant" aria-hidden="true">AI</div>
+      </div>
     </article>
-  `).join("");
+  `;
+  const historyHtml = (chat.history || []).map((item) => chatTurnHtml(item.question, item.answer)).join("");
+  const pendingHtml = chat.sending && chat.pendingQuestion ? chatTurnHtml(chat.pendingQuestion, "", true) : "";
   container.innerHTML = `
     <div class="quiz-player">
       <div class="quiz-player-head">
@@ -1396,7 +1408,7 @@ function renderAiAssistantPlayer(container, module, mode) {
           </div>
         </div>
       </div>
-      <div class="quiz-form">
+      <div class="quiz-form ai-chat-panel">
         ${showContextMeta ? `
         <article class="quiz-question">
           <div class="quiz-question-title">System Prompt</div>
@@ -1404,7 +1416,7 @@ function renderAiAssistantPlayer(container, module, mode) {
           <div class="quiz-question-title" style="margin-top:8px;">Knowledge Summary</div>
           <div class="quiz-question-body">${cfg.knowledge ? escapeHtml(cfg.knowledge.slice(0, 1200)) : "<span class=\"muted-text\">Not configured</span>"}</div>
         </article>` : ""}
-        ${historyHtml || '<div class="muted-text">No questions yet</div>'}
+        <div class="ai-chat-log">${historyHtml}${pendingHtml || ""}${historyHtml || pendingHtml ? "" : '<div class="ai-chat-empty">No questions yet</div>'}</div>
       </div>
       <div class="quiz-actions" style="margin-top:12px; align-items:flex-start;">
         <textarea class="quiz-textarea" rows="3" style="flex:1; min-width:280px;" data-ai-input="${mode}" data-mid="${module.id}" placeholder="Enter a classroom question, e.g. explain molecular thermal motion using everyday examples.">${escapeHtml(chat.draft || "")}</textarea>
@@ -1432,6 +1444,7 @@ async function sendAiQuestion(mode, moduleId) {
   }
   chat.error = "";
   chat.sending = true;
+  chat.pendingQuestion = question;
   mode === "preview" ? renderPreview() : renderTeaching();
   try {
     const res = await fetch(apiUrl("/api/ai/chat"), {
@@ -1457,6 +1470,7 @@ async function sendAiQuestion(mode, moduleId) {
     chat.error = String(err?.message || err || "AI request failed");
   } finally {
     chat.sending = false;
+    chat.pendingQuestion = "";
     mode === "preview" ? renderPreview() : renderTeaching();
   }
 }
