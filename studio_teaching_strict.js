@@ -32,9 +32,9 @@ async function ensureServedMode() {
 const CONTENT_OPTIONS = [
   { key: "ppt", label: "PPT", needFile: true },
   { key: "interactive", label: "Interactive Activity", needFile: true },
-  { key: "video", label: "Video", needFile: true },
-  { key: "quiz", label: "Quiz", needFile: true },
-  { key: "ai_assistant", label: "AI Assistant (Under improvement)", needFile: false },
+  { key: "ai_assistant", label: "AI Assistant", needFile: false },
+  { key: "video", label: "Video (Under improvement)", needFile: true },
+  { key: "quiz", label: "Quiz (Under improvement)", needFile: true },
   { key: "decision", label: "Branch Decision (Under improvement)", needFile: false },
   { key: "merge", label: "Merge (Under improvement)", needFile: false },
 ];
