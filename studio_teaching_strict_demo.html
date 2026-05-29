@@ -389,57 +389,6 @@
               <label for="publishDescriptionInput">Project Description</label>
               <textarea id="publishDescriptionInput" name="description" rows="3"></textarea>
             </div>
-            <div class="studio-form-row">
-              <label for="publishCoverInput">Project Cover</label>
-              <input id="publishCoverInput" name="cover" type="file" accept="image/*" />
-            </div>
-            <div class="studio-form-row">
-              <label>Visibility</label>
-              <div class="studio-inline">
-                <label><input type="radio" name="visibility" value="public" checked /> Public</label>
-                <label><input type="radio" name="visibility" value="private" /> Private</label>
-              </div>
-            </div>
-
-            <div class="studio-private-settings hidden" id="privateSettings">
-              <div class="studio-form-row">
-                <label for="classSearchInput">Allowed Classes (searchable)</label>
-                <input id="classSearchInput" placeholder="Enter a class name or ID keyword" />
-                <div class="studio-class-picker" id="classPicker"></div>
-              </div>
-              <div class="studio-form-row">
-                <label for="accessCodeInput">Access Code</label>
-                <input id="accessCodeInput" name="accessCode" maxlength="24" placeholder="At least 4 characters recommended" />
-              </div>
-            </div>
-
-            <div class="studio-form-row">
-              <label>Measurement Modules</label>
-              <div class="studio-inline">
-                <label><input type="checkbox" name="measureAudio" /> Audio Recording</label>
-                <label><input type="checkbox" name="measureVideo" /> Video Recording</label>
-                <label><input type="checkbox" name="measureActions" checked /> Action Log</label>
-              </div>
-            </div>
-
-            <div class="studio-form-row">
-              <div class="studio-inline" style="justify-content: space-between; align-items: center;">
-                <label><input type="checkbox" name="autoPlay" id="publishAutoPlay" /> Auto Play</label>
-                <label style="display: inline-flex; align-items: center; gap: 8px;">
-                  Interval (seconds)
-                  <input
-                    class="studio-autoplay-seconds"
-                    id="publishAutoPlaySeconds"
-                    name="autoPlaySeconds"
-                    type="number"
-                    min="1"
-                    max="600"
-                    step="1"
-                    value="12"
-                  />
-                </label>
-              </div>
-            </div>
             <div class="studio-form-message" id="publishFormMessage"></div>
             <div class="studio-form-actions">
               <button class="primary-btn" type="submit">Publish</button>
@@ -502,19 +451,6 @@
           </div>
           <div class="studio-preview-body" id="previewBody"></div>
           <div class="studio-preview-actions">
-            <label><input type="checkbox" id="previewAutoPlayToggle" /> Auto Play</label>
-            <label style="display: inline-flex; align-items: center; gap: 8px;">
-              Interval (seconds)
-              <input
-                class="studio-autoplay-seconds"
-                id="previewAutoPlaySeconds"
-                type="number"
-                min="1"
-                max="600"
-                step="1"
-                value="12"
-              />
-            </label>
             <button class="ghost-btn" id="previewPrevBtn" type="button">Previous</button>
             <button class="primary-btn" id="previewNextBtn" type="button">Next</button>
           </div>
@@ -575,4 +511,3 @@
     <script src="./studio_teaching_strict.js"></script>
   </body>
 </html>
-

@@ -125,14 +125,10 @@ const dom = {
   publishCancelBtn: document.getElementById("publishCancelBtn"),
   publishNameInput: document.getElementById("publishNameInput"),
   publishDescriptionInput: document.getElementById("publishDescriptionInput"),
-  publishAutoPlay: document.getElementById("publishAutoPlay"),
-  publishAutoPlaySeconds: document.getElementById("publishAutoPlaySeconds"),
   previewModal: document.getElementById("previewModal"),
   previewBody: document.getElementById("previewBody"),
   previewProjectTitle: document.getElementById("previewProjectTitle"),
   previewStepInfo: document.getElementById("previewStepInfo"),
-  previewAutoPlayToggle: document.getElementById("previewAutoPlayToggle"),
-  previewAutoPlaySeconds: document.getElementById("previewAutoPlaySeconds"),
   previewPrevBtn: document.getElementById("previewPrevBtn"),
   previewNextBtn: document.getElementById("previewNextBtn"),
   previewCloseBtn: document.getElementById("previewCloseBtn"),
@@ -1557,9 +1553,6 @@ function renderPreview() {
   dom.previewStepInfo.textContent = `${r.info} · ${playableIndex + 1}/${Math.max(1, playable.length)}`;
   dom.previewPrevBtn.disabled = playableIndex <= 0;
   dom.previewNextBtn.disabled = r.decision || !r.hasNext;
-  if (dom.previewAutoPlayToggle.checked && !r.decision && r.hasNext) {
-    state.preview.timer = setTimeout(() => movePreview(), clampSec(dom.previewAutoPlaySeconds.value, 12) * 1000);
-  }
 }
 
 function openPreview(startId = null) {
@@ -1575,8 +1568,6 @@ function openPreview(startId = null) {
   const i = state.preview.snapshot.sequence.indexOf(id);
   state.preview.index = i >= 0 ? i : 0;
   dom.previewProjectTitle.textContent = `${p.name} (Preview)`;
-  dom.previewAutoPlayToggle.checked = false;
-  dom.previewAutoPlaySeconds.value = "12";
   dom.previewModal.classList.remove("hidden");
   renderPreview();
 }
@@ -1851,8 +1842,8 @@ async function init() {
       name: p.name,
       description: p.description,
       publishedAt: now(),
-      autoPlay: Boolean(dom.publishAutoPlay.checked),
-      autoPlaySeconds: clampSec(dom.publishAutoPlaySeconds.value, 12),
+      autoPlay: false,
+      autoPlaySeconds: 12,
     });
     state.published.set(p.id, snap);
     showMsg(dom.publishFormMessage, "Published successfully. You can view it in the classroom player.", false);
@@ -1886,8 +1877,6 @@ async function init() {
     }
   });
   dom.previewNextBtn.addEventListener("click", () => movePreview());
-  dom.previewAutoPlayToggle.addEventListener("change", renderPreview);
-  dom.previewAutoPlaySeconds.addEventListener("change", () => { dom.previewAutoPlaySeconds.value = String(clampSec(dom.previewAutoPlaySeconds.value, 12)); renderPreview(); });
 
   dom.moduleUploadAction.addEventListener("click", () => {
     const p = curProject();
