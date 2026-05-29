@@ -204,9 +204,9 @@ function buildDemoBootstrap() {
   const introPages = estimatePdfPages(path.join(UPLOAD_DIR, path.basename(introPath)));
   const summaryPages = estimatePdfPages(path.join(UPLOAD_DIR, path.basename(summaryPath)));
 
-  const promptConcept = "You are the Concept Q&A Assistant for high-school physics (Newton First Law). Explain inertia, balanced forces, net force, and motion states with short examples. Emphasize that a nonzero net force changes motion. Ask one diagnostic question before conclusions.";
-  const promptGuide = "You are the Experiment Inquiry Guide. Lead students to propose hypotheses, identify variables, design procedures, collect data, and explain deviations. Provide hints from easy to advanced.";
-  const promptAnalysis = "You are the Experiment Analysis Assistant. Help with data processing, chart interpretation, uncertainty/error analysis, and concise conclusions suitable for classroom summary. State conclusions in terms of resistance and net force, not simply whether any force exists.";
+  const promptConcept = "You are the Concept Q&A Assistant for a middle school physics lesson on Newton’s first law. Explain inertia, balanced and unbalanced forces, net force, friction or resistance, and motion states with short examples. Emphasize that nonzero net force changes motion, while zero net force means rest or constant velocity. Ask one diagnostic question before giving a conclusion.";
+  const promptGuide = "You are the Experiment Inquiry Guide for the investigation stage. Do not give final answers immediately. Ask one guiding question at a time and use graduated hints. Help students propose hypotheses, identify variables, design fair tests, collect observations, and cite evidence from stopping distances and velocity–time graphs.";
+  const promptAnalysis = "You are the Experiment Analysis Assistant for the summary stage. Help students process results, interpret velocity–time graphs, discuss uncertainty or error, and write concise conclusions in terms of resistance, friction, net force, and changes in motion.";
 
   const modules = [
     {
