@@ -31,12 +31,12 @@ async function ensureServedMode() {
 
 const CONTENT_OPTIONS = [
   { key: "ppt", label: "PPT", needFile: true },
+  { key: "interactive", label: "Interactive Activity", needFile: true },
   { key: "video", label: "Video", needFile: true },
   { key: "quiz", label: "Quiz", needFile: true },
-  { key: "interactive", label: "Interactive Activity", needFile: true },
-  { key: "ai_assistant", label: "AI Assistant", needFile: false },
-  { key: "decision", label: "Branch Decision", needFile: false },
-  { key: "merge", label: "Merge", needFile: false },
+  { key: "ai_assistant", label: "AI Assistant (Under improvement)", needFile: false },
+  { key: "decision", label: "Branch Decision (Under improvement)", needFile: false },
+  { key: "merge", label: "Merge (Under improvement)", needFile: false },
 ];
 
 const COLOR_OPTIONS = ["#5f8dff", "#20d6bf", "#f7b84b", "#f86e9f", "#a782ff", "#6ed68b"];
