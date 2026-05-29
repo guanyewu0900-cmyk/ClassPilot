@@ -1382,11 +1382,11 @@ function renderAiAssistantPlayer(container, module, mode) {
         </div>
       </div>
       <div class="ai-chat-message ai-chat-message-assistant">
+        <div class="ai-chat-avatar ai-chat-avatar-assistant" aria-hidden="true">AI</div>
         <div class="ai-chat-bubble">
           <div class="ai-chat-name">AI Assistant</div>
           <div class="ai-chat-text">${pending ? '<span class="ai-chat-typing">Answering...</span>' : escapeHtml(answer || "")}</div>
         </div>
-        <div class="ai-chat-avatar ai-chat-avatar-assistant" aria-hidden="true">AI</div>
       </div>
     </article>
   `;

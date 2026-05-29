@@ -1681,11 +1681,12 @@ body::before {
 }
 
 .ai-chat-message-student {
+  flex-direction: row-reverse;
   justify-content: flex-start;
 }
 
 .ai-chat-message-assistant {
-  justify-content: flex-end;
+  justify-content: flex-start;
 }
 
 .ai-chat-avatar {
@@ -1723,12 +1724,12 @@ body::before {
 }
 
 .ai-chat-message-student .ai-chat-bubble {
-  border-top-left-radius: 3px;
+  border-top-right-radius: 3px;
   background: rgba(13, 25, 48, 0.94);
 }
 
 .ai-chat-message-assistant .ai-chat-bubble {
-  border-top-right-radius: 3px;
+  border-top-left-radius: 3px;
   background: rgba(7, 42, 50, 0.94);
   border-color: rgba(102, 255, 209, 0.28);
 }
@@ -1743,6 +1744,9 @@ body::before {
 
 .ai-chat-message-assistant .ai-chat-name {
   color: #bdfff0;
+}
+
+.ai-chat-message-student .ai-chat-name {
   text-align: right;
 }
 
