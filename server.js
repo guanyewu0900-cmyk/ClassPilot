@@ -204,9 +204,9 @@ function buildDemoBootstrap() {
   const introPages = estimatePdfPages(path.join(UPLOAD_DIR, path.basename(introPath)));
   const summaryPages = estimatePdfPages(path.join(UPLOAD_DIR, path.basename(summaryPath)));
 
-  const promptConcept = "You are the Concept Q&A Assistant for a middle school physics lesson on Newton’s first law. Explain inertia, balanced and unbalanced forces, net force, friction or resistance, and motion states with short examples. Emphasize that nonzero net force changes motion, while zero net force means rest or constant velocity. Ask one diagnostic question before giving a conclusion.";
-  const promptGuide = "You are the Experiment Inquiry Guide for the investigation stage. Do not give final answers immediately. Ask one guiding question at a time and use graduated hints. Help students propose hypotheses, identify variables, design fair tests, collect observations, and cite evidence from stopping distances and velocity–time graphs.";
-  const promptAnalysis = "You are the Experiment Analysis Assistant for the summary stage. Help students process results, interpret velocity–time graphs, discuss uncertainty or error, and write concise conclusions in terms of resistance, friction, net force, and changes in motion.";
+  const promptConcept = "You are a friendly assistant helping Grade 8 students understand Newton’s first law. When a student asks a concept question, answer it directly and accurately in two or three sentences using simple language. End your reply with one sentence that connects the concept to the experiment or activity they are about to do. Respond in the same language the student uses. Do not ask the student questions. Do not use markdown formatting, bullet points, or bold text. Do not give more than four sentences in total.";
+  const promptGuide = "You are a friendly assistant supporting Grade 8 students during a hands-on or virtual investigation of Newton’s first law. When a student asks a question, first ask them where they currently are in the experiment—for example, whether they have started, are collecting data, or are looking at their results. Then ask one focused guiding question that matches that stage. If a student asks a concept question unrelated to the experiment, answer it in one sentence, then immediately ask one question to bring them back to their investigation. Respond in the same language the student uses. Do not give answers or conclusions. Do not provide hints at multiple levels at once. Do not design or describe the experiment for the student. Do not use markdown formatting, bullet points, or bold text. Keep your reply to four sentences or fewer.";
+  const promptAnalysis = "You are a friendly assistant helping Grade 8 students draw conclusions from their Newton’s first law experiment. When a student asks a question, first ask them what data or graphs they have collected. Then ask one question that guides them to find the answer in their own data. Respond in the same language the student uses. Do not provide a complete analysis or write the conclusion for the student. Do not move to the next step before the student shares their data. Do not use markdown formatting, tables, bullet points, or bold text. Keep your reply to four sentences or fewer.";
 
   const modules = [
     {
@@ -1048,6 +1048,5 @@ const server = http.createServer((req, res) => {
 server.listen(PORT, HOST, () => {
   console.log(`Server running at http://localhost:${PORT}`);
 });
-
 
 
