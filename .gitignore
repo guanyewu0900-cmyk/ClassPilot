@@ -1,0 +1,28 @@
+# Local configuration and secrets
+.env
+.env.*
+!.env.example
+
+# Dependencies and logs
+node_modules/
+*.log
+npm-debug.log*
+
+# Runtime uploads: keep only the public demo assets below
+uploads/*
+!uploads/README.md
+!uploads/demo_interactive.html
+!uploads/demo_lesson_ppt.pdf
+!uploads/demo_quiz_image.svg
+!uploads/newton_interactive.html
+!uploads/newton_intro.pdf
+!uploads/newton_summary.pdf
+!uploads/sample_knowledge_base.md
+
+# Local tooling and temporary files
+__pycache__/
+*.py[cod]
+.audit-assets/
+.lo-audit-profile/
+.DS_Store
+Thumbs.db
