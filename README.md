@@ -55,16 +55,19 @@ http://localhost:5173/
 
 ## Model configuration
 
-API keys remain on the server and are never sent to the browser.
+All interface options use ChatAnywhere. The API key remains on the server and is never sent to the browser.
 
-| Interface option | Required variables |
-| --- | --- |
-| DeepSeek Chat / Reasoner | `DEEPSEEK_API_KEY` |
-| ChatGPT / OpenAI | `OPENAI_API_KEY`, `OPENAI_MODEL` |
-| Claude / Anthropic | `ANTHROPIC_API_KEY`, `ANTHROPIC_MODEL` |
-| Kimi / Moonshot AI | `KIMI_API_KEY`, `KIMI_MODEL` |
+| Variable | Purpose | Default |
+| --- | --- | --- |
+| `CHATANYWHERE_API_KEY` | The single server-side secret used by every model | Required |
+| `CHATANYWHERE_BASE_URL` | ChatAnywhere API base URL | `https://api.chatanywhere.tech/v1` |
+| `CHATANYWHERE_DEEPSEEK_CHAT_MODEL` | DeepSeek Chat model ID | `deepseek-chat` |
+| `CHATANYWHERE_DEEPSEEK_REASONER_MODEL` | DeepSeek Reasoner model ID | `deepseek-reasoner` |
+| `CHATANYWHERE_OPENAI_MODEL` | ChatGPT model ID | `gpt-5.6-sol` |
+| `CHATANYWHERE_CLAUDE_MODEL` | Claude model ID | `claude-sonnet-4-6` |
+| `CHATANYWHERE_KIMI_MODEL` | Kimi model ID | `kimi-k2.5` |
 
-Set only the providers you intend to use. Model IDs are configurable because availability varies by provider account and region.
+Only `CHATANYWHERE_API_KEY` is secret. Model IDs may be changed to values returned by ChatAnywhere's `/v1/models` endpoint.
 
 ## Verification
 

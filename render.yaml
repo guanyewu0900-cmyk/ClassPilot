@@ -8,29 +8,17 @@ services:
     envVars:
       - key: NODE_ENV
         value: production
-      - key: DEEPSEEK_BASE_URL
-        value: https://api.deepseek.com/v1
-      - key: DEEPSEEK_API_KEY
+      - key: CHATANYWHERE_BASE_URL
+        value: https://api.chatanywhere.tech/v1
+      - key: CHATANYWHERE_API_KEY
         sync: false
-      - key: DEEPSEEK_CHAT_MODEL
+      - key: CHATANYWHERE_DEEPSEEK_CHAT_MODEL
         value: deepseek-chat
-      - key: DEEPSEEK_REASONER_MODEL
+      - key: CHATANYWHERE_DEEPSEEK_REASONER_MODEL
         value: deepseek-reasoner
-      - key: OPENAI_BASE_URL
-        value: https://api.openai.com/v1
-      - key: OPENAI_API_KEY
-        sync: false
-      - key: OPENAI_MODEL
-        sync: false
-      - key: ANTHROPIC_BASE_URL
-        value: https://api.anthropic.com/v1
-      - key: ANTHROPIC_API_KEY
-        sync: false
-      - key: ANTHROPIC_MODEL
-        sync: false
-      - key: KIMI_BASE_URL
-        value: https://api.moonshot.cn/v1
-      - key: KIMI_API_KEY
-        sync: false
-      - key: KIMI_MODEL
-        sync: false
+      - key: CHATANYWHERE_OPENAI_MODEL
+        value: gpt-5.6-sol
+      - key: CHATANYWHERE_CLAUDE_MODEL
+        value: claude-sonnet-4-6
+      - key: CHATANYWHERE_KIMI_MODEL
+        value: kimi-k2.5

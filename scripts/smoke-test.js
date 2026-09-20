@@ -62,17 +62,13 @@ async function main() {
     env: {
       ...process.env,
       PORT: String(appPort),
-      DEEPSEEK_BASE_URL: providerBase,
-      DEEPSEEK_API_KEY: "test",
-      OPENAI_BASE_URL: providerBase,
-      OPENAI_API_KEY: "test",
-      OPENAI_MODEL: "openai-test-model",
-      ANTHROPIC_BASE_URL: providerBase,
-      ANTHROPIC_API_KEY: "test",
-      ANTHROPIC_MODEL: "claude-test-model",
-      KIMI_BASE_URL: providerBase,
-      KIMI_API_KEY: "test",
-      KIMI_MODEL: "kimi-test-model",
+      CHATANYWHERE_BASE_URL: providerBase,
+      CHATANYWHERE_API_KEY: "test",
+      CHATANYWHERE_DEEPSEEK_CHAT_MODEL: "deepseek-chat-test",
+      CHATANYWHERE_DEEPSEEK_REASONER_MODEL: "deepseek-reasoner-test",
+      CHATANYWHERE_OPENAI_MODEL: "openai-test-model",
+      CHATANYWHERE_CLAUDE_MODEL: "claude-test-model",
+      CHATANYWHERE_KIMI_MODEL: "kimi-test-model",
     },
     stdio: ["ignore", "pipe", "pipe"],
   });
@@ -114,7 +110,8 @@ async function main() {
 
     assert.strictEqual(requests.filter((item) => item.url === "/v1/chat/completions").length, 4);
     assert.strictEqual(requests.filter((item) => item.url === "/v1/messages").length, 1);
-    console.log("Smoke test passed: UI, bootstrap, DeepSeek, OpenAI, Claude, and Kimi routes.");
+    assert.ok(requests.every((item) => item.headers.authorization === "Bearer test"));
+    console.log("Smoke test passed: UI, bootstrap, and all model routes use one ChatAnywhere key.");
   } finally {
     child.kill();
     await close(mockProvider);

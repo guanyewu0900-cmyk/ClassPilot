@@ -25,49 +25,51 @@ const HOST = "0.0.0.0";
 const PORT = Number(process.env.PORT || 5173);
 const ROOT = __dirname;
 const UPLOAD_DIR = path.join(ROOT, "uploads");
+const CHATANYWHERE_BASE_URL = process.env.CHATANYWHERE_BASE_URL || "https://api.chatanywhere.tech/v1";
+const CHATANYWHERE_API_KEY = String(process.env.CHATANYWHERE_API_KEY || "").trim();
 const AI_MODELS = {
   "deepseek-chat": {
     label: "DeepSeek Chat",
     protocol: "openai",
-    baseUrl: process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1",
-    apiKey: process.env.DEEPSEEK_API_KEY || "",
-    model: process.env.DEEPSEEK_CHAT_MODEL || "deepseek-chat",
-    keyName: "DEEPSEEK_API_KEY",
+    baseUrl: CHATANYWHERE_BASE_URL,
+    apiKey: CHATANYWHERE_API_KEY,
+    model: process.env.CHATANYWHERE_DEEPSEEK_CHAT_MODEL || "deepseek-chat",
+    keyName: "CHATANYWHERE_API_KEY",
   },
   "deepseek-reasoner": {
     label: "DeepSeek Reasoner",
     protocol: "openai",
-    baseUrl: process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com/v1",
-    apiKey: process.env.DEEPSEEK_API_KEY || "",
-    model: process.env.DEEPSEEK_REASONER_MODEL || "deepseek-reasoner",
-    keyName: "DEEPSEEK_API_KEY",
+    baseUrl: CHATANYWHERE_BASE_URL,
+    apiKey: CHATANYWHERE_API_KEY,
+    model: process.env.CHATANYWHERE_DEEPSEEK_REASONER_MODEL || "deepseek-reasoner",
+    keyName: "CHATANYWHERE_API_KEY",
   },
   openai: {
     label: "ChatGPT / OpenAI",
     protocol: "openai",
-    baseUrl: process.env.OPENAI_BASE_URL || "https://api.openai.com/v1",
-    apiKey: process.env.OPENAI_API_KEY || "",
-    model: process.env.OPENAI_MODEL || "",
-    keyName: "OPENAI_API_KEY",
-    modelName: "OPENAI_MODEL",
+    baseUrl: CHATANYWHERE_BASE_URL,
+    apiKey: CHATANYWHERE_API_KEY,
+    model: process.env.CHATANYWHERE_OPENAI_MODEL || "gpt-5.6-sol",
+    keyName: "CHATANYWHERE_API_KEY",
+    modelName: "CHATANYWHERE_OPENAI_MODEL",
   },
   claude: {
     label: "Claude / Anthropic",
     protocol: "anthropic",
-    baseUrl: process.env.ANTHROPIC_BASE_URL || "https://api.anthropic.com/v1",
-    apiKey: process.env.ANTHROPIC_API_KEY || "",
-    model: process.env.ANTHROPIC_MODEL || "",
-    keyName: "ANTHROPIC_API_KEY",
-    modelName: "ANTHROPIC_MODEL",
+    baseUrl: CHATANYWHERE_BASE_URL,
+    apiKey: CHATANYWHERE_API_KEY,
+    model: process.env.CHATANYWHERE_CLAUDE_MODEL || "claude-sonnet-4-6",
+    keyName: "CHATANYWHERE_API_KEY",
+    modelName: "CHATANYWHERE_CLAUDE_MODEL",
   },
   kimi: {
     label: "Kimi / Moonshot AI",
     protocol: "openai",
-    baseUrl: process.env.KIMI_BASE_URL || "https://api.moonshot.cn/v1",
-    apiKey: process.env.KIMI_API_KEY || "",
-    model: process.env.KIMI_MODEL || "",
-    keyName: "KIMI_API_KEY",
-    modelName: "KIMI_MODEL",
+    baseUrl: CHATANYWHERE_BASE_URL,
+    apiKey: CHATANYWHERE_API_KEY,
+    model: process.env.CHATANYWHERE_KIMI_MODEL || "kimi-k2.5",
+    keyName: "CHATANYWHERE_API_KEY",
+    modelName: "CHATANYWHERE_KIMI_MODEL",
   },
 };
 
@@ -885,7 +887,7 @@ async function callAnthropic(config, systemText, question) {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "x-api-key": config.apiKey,
+      Authorization: `Bearer ${config.apiKey}`,
       "anthropic-version": "2023-06-01",
     },
     body: JSON.stringify(requestBody),
