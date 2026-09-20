@@ -439,6 +439,25 @@
   width: min(880px, 100%);
 }
 
+.studio-ai-modal-card {
+  max-height: calc(100vh - 40px);
+  max-height: calc(100dvh - 40px);
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.studio-ai-modal-card .studio-modal-title {
+  flex: 0 0 auto;
+}
+
+.studio-ai-modal-card .studio-form {
+  min-height: 0;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding-right: 8px;
+  scrollbar-gutter: stable;
+}
 .studio-modal-title {
   font-size: 20px;
   font-weight: 700;
