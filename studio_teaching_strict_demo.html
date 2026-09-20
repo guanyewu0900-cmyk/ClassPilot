@@ -203,7 +203,17 @@
       body.teaching-fullscreen-mode #teachingDemoSection .teaching-demo-actions {
         margin-top: 10px;
       }
+      body.teaching-playback-mode {
+        height: 100vh;
+        min-height: 0;
+        overflow: hidden;
+        display: grid;
+        grid-template-rows: auto minmax(0, 1fr);
+      }
       body.teaching-playback-mode #teachingDemoSection.active {
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
         padding: 0;
         background: #030916;
       }
@@ -211,7 +221,8 @@
         grid-template-columns: 1fr;
         max-width: none;
         width: 100%;
-        min-height: 100vh;
+        height: 100%;
+        min-height: 0;
         margin: 0;
         gap: 0;
       }
@@ -225,15 +236,18 @@
         border: 0;
         border-radius: 0;
         box-shadow: none;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        box-sizing: border-box;
         padding: 14px 18px 12px;
-        min-height: 100vh;
         background: #030916;
         display: grid;
-        grid-template-rows: 1fr auto;
+        grid-template-rows: minmax(0, 1fr) auto;
       }
       body.teaching-playback-mode #teachingDemoSection.active #teachingPlayerArea {
         min-height: 0;
-        height: 100%;
+        height: auto;
       }
       body.teaching-pdf-focus #teachingDemoSection.active {
         padding: 0;
@@ -252,17 +266,20 @@
         border: 0;
         border-radius: 0;
         box-shadow: none;
-        min-height: 100vh;
+        height: 100%;
+        min-height: 0;
+        overflow: hidden;
+        box-sizing: border-box;
         padding: 10px 12px 10px;
         display: grid;
-        grid-template-rows: 1fr auto;
+        grid-template-rows: minmax(0, 1fr) auto;
         gap: 8px;
       }
       body.teaching-pdf-focus #teachingDemoSection.active #teachingPlayerArea {
         border: 0;
         border-radius: 0;
         min-height: 0;
-        height: 100%;
+        height: auto;
         background: #0a0a0a;
       }
       body.teaching-pdf-focus #teachingDemoSection.active #teachingPlayerArea .ppt-pdf-player,
