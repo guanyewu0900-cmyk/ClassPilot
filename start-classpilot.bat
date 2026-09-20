@@ -13,7 +13,7 @@ if errorlevel 1 (
 if not exist ".env" (
   copy /Y ".env.example" ".env" >nul
   echo Created .env from .env.example.
-  echo Add provider API keys to .env to enable AI responses.
+  echo Add your ChatAnywhere key after CHATANYWHERE_API_KEY= to enable AI responses.
 )
 
 start "ClassPilot Server" /D "%~dp0" cmd /k node server.js

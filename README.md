@@ -21,7 +21,7 @@ For school use, deploy ClassPilot on a school-managed computer or server. Course
 ## Requirements
 
 - Node.js 18 or later
-- An API key for at least one model provider if AI chat is required
+- A ChatAnywhere API key if AI chat is required
 
 The course editor and classroom player work without an API key. Only AI responses require provider configuration.
 
@@ -31,7 +31,7 @@ The course editor and classroom player work without an API key. Only AI response
 2. Double-click `start-classpilot.bat`.
 3. Open `http://localhost:5173/` if the browser does not open automatically.
 
-On first launch, the script creates `.env` from `.env.example`. Add the API key and model ID for any provider you want to use, then restart the server.
+On first launch, the script creates `.env` from `.env.example`. Add your own key after `CHATANYWHERE_API_KEY=`, then restart the server. The editor and classroom player work without a key.
 
 ## Command-line start
 

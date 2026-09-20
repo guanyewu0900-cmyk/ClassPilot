@@ -1,0 +1,23 @@
+ClassPilot - Reviewer Quick Start
+
+Windows
+1. Install Node.js 18 or later from https://nodejs.org/ if it is not already installed.
+2. Extract this ZIP file.
+3. Double-click start-classpilot.bat in the extracted ClassPilot folder.
+4. The platform opens automatically at http://localhost:5173/.
+
+The course editor, sample project, and classroom player work without an API key.
+
+Optional AI responses
+1. Run start-classpilot.bat once so that it creates the local .env file.
+2. Open .env with a text editor.
+3. Enter your own ChatAnywhere key after CHATANYWHERE_API_KEY=.
+4. Save .env, close the ClassPilot Server window, and double-click start-classpilot.bat again.
+
+To stop ClassPilot, close the window titled ClassPilot Server.
+
+macOS or Linux
+Run:
+  chmod +x start-classpilot.sh
+  ./start-classpilot.sh
+Then open http://localhost:5173/.

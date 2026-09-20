@@ -8,7 +8,7 @@ ClassPilot is a Node.js application with no third-party runtime dependencies. `s
 
 Double-click `start-classpilot.bat`. On first launch it creates `.env` from `.env.example` and opens the platform at `http://localhost:5173/`.
 
-Add the API key and model ID for each provider you want to use, then restart the server. The editor and classroom player remain available without model credentials.
+Add your own key after `CHATANYWHERE_API_KEY=`, then restart the server. The editor and classroom player remain available without model credentials.
 
 ### macOS or Linux
 
@@ -29,32 +29,24 @@ npm start
 ```text
 PORT=5173
 
-DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
-DEEPSEEK_API_KEY=
-DEEPSEEK_CHAT_MODEL=deepseek-chat
-DEEPSEEK_REASONER_MODEL=deepseek-reasoner
+CHATANYWHERE_BASE_URL=https://api.chatanywhere.tech/v1
+CHATANYWHERE_API_KEY=
 
-OPENAI_BASE_URL=https://api.openai.com/v1
-OPENAI_API_KEY=
-OPENAI_MODEL=
-
-ANTHROPIC_BASE_URL=https://api.anthropic.com/v1
-ANTHROPIC_API_KEY=
-ANTHROPIC_MODEL=
-
-KIMI_BASE_URL=https://api.moonshot.cn/v1
-KIMI_API_KEY=
-KIMI_MODEL=
+CHATANYWHERE_DEEPSEEK_CHAT_MODEL=deepseek-chat
+CHATANYWHERE_DEEPSEEK_REASONER_MODEL=deepseek-v3.2-thinking
+CHATANYWHERE_OPENAI_MODEL=gpt-5.6-sol
+CHATANYWHERE_CLAUDE_MODEL=claude-sonnet-4-6
+CHATANYWHERE_KIMI_MODEL=kimi-k2.5
 ```
 
-API keys are read only by the server. Do not commit `.env`.
+The API key is read only by the server. Do not commit `.env`. The model IDs are ordinary configuration values and may be changed to models available to the ChatAnywhere account.
 
 ## Render
 
 The repository includes `render.yaml`.
 
 1. In Render, create a Blueprint from the GitHub repository.
-2. Add the API key and model ID for each provider used by the public demonstration.
+2. Add `CHATANYWHERE_API_KEY`. The model IDs in `render.yaml` may be changed if needed.
 3. Deploy and open the assigned Render URL.
 
 Render's free filesystem is ephemeral. The bundled demo assets are restored from the repository on deployment, but files uploaded at runtime are not durable on the free plan.

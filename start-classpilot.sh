@@ -9,7 +9,7 @@ fi
 
 if [ ! -f .env ]; then
   cp .env.example .env
-  echo "Created .env from .env.example. Add provider API keys to enable AI responses."
+  echo "Created .env from .env.example. Add your ChatAnywhere key after CHATANYWHERE_API_KEY= to enable AI responses."
 fi
 
 exec node server.js
