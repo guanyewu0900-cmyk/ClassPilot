@@ -49,7 +49,7 @@ The repository includes `render.yaml`.
 2. Add `CHATANYWHERE_API_KEY`. The model IDs in `render.yaml` may be changed if needed.
 3. Deploy and open the assigned Render URL.
 
-Render's free filesystem is ephemeral. The bundled demo assets are restored from the repository on deployment, but files uploaded at runtime are not durable on the free plan.
+Render's free filesystem is ephemeral. Bundled demo assets are restored from the repository on deployment. Runtime lesson media is retained in the browser and restored after a refresh in that same browser; it is not a shared, durable server-side file store on the free plan.
 
 ## Ubuntu with PM2
 

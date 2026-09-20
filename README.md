@@ -16,7 +16,7 @@ ClassPilot is an open-source platform for designing lesson flows, presenting cla
 
 The public demonstration is intended for evaluation with non-sensitive example materials. Do not upload personal, sensitive, or identifiable student information to a public deployment.
 
-For school use, deploy ClassPilot on a school-managed computer or server. Course projects are stored in the browser, and uploaded files are stored in the local `uploads/` directory. When a cloud model is used, the prompt, question, and relevant knowledge text required for the request are sent to the provider configured by the operator. See [DATA_AND_PRIVACY.md](DATA_AND_PRIVACY.md).
+For school use, deploy ClassPilot on a school-managed computer or server. Course projects are stored in the browser. Uploaded lesson media is also retained in the browser so it can be restored after a refresh; the running server receives a copy in its local `uploads/` directory. When a cloud model is used, the prompt, question, and relevant knowledge text required for the request are sent to the provider configured by the operator. See [DATA_AND_PRIVACY.md](DATA_AND_PRIVACY.md).
 
 ## Requirements
 

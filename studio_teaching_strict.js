@@ -4,6 +4,8 @@ const GRID_OFFSET = 12;
 const GRID_SIZE = 24;
 const LOCAL_STATE_KEY = "phycs_teacher_workspace_v2";
 const LEGACY_LOCAL_STATE_KEYS = ["phycs_teacher_workspace_v1"];
+const MEDIA_DB_NAME = "classpilot_media_v1";
+const MEDIA_STORE_NAME = "module_files";
 const API_BASE = window.location.protocol === "file:" ? "http://localhost:5173" : "";
 const apiUrl = (p) => (API_BASE ? `${API_BASE}${p}` : p);
 const toAssetUrl = (u) => {
@@ -63,6 +65,10 @@ const DEMO_WORKFLOW_CONNECTIONS = [
   { fromModuleId: 2304, toModuleId: 2305 },
   { fromModuleId: 2305, toModuleId: 2306 },
 ];
+const BUNDLED_DEMO_PDFS = new Map([
+  [2301, { src: "/uploads/newton_intro.pdf", name: "newton_intro.pdf", pages: 7 }],
+  [2305, { src: "/uploads/newton_summary.pdf", name: "newton_summary.pdf", pages: 5 }],
+]);
 
 const PDFJS_SCRIPT_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js";
 const PDFJS_WORKER_URL = "https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js";
@@ -71,6 +77,8 @@ const pdfRuntime = {
   docs: new Map(),
   renderSeq: 0,
 };
+
+let mediaDbPromise = null;
 
 const state = {
   seq: { project: 1000, module: 2000, publish: 3000 },
@@ -328,6 +336,19 @@ function applyDemoWorkflowLayout(project) {
   return true;
 }
 
+function applyBundledDemoPdfs(modules) {
+  (modules || []).forEach((module) => {
+    const bundled = BUNDLED_DEMO_PDFS.get(Number(module.id));
+    if (!bundled || module.contentType !== "ppt" || module.compile?.data?.mediaKey) return;
+    const src = toAssetUrl(bundled.src);
+    module.compile = {
+      ready: true,
+      summary: `Compiled: ${bundled.name} (about ${bundled.pages} pages)`,
+      data: { type: "ppt", src, serverSrc: src, pages: bundled.pages },
+    };
+  });
+}
+
 function normalizeSnapshotModule(raw, fallbackId, index = 0) {
   const contentType = CONTENT_OPTIONS.some((x) => x.key === raw?.contentType) ? raw.contentType : "decision";
   const compileDefault = contentType === "ai_assistant"
@@ -395,9 +416,13 @@ function normalizeSnapshot(raw, index = 0) {
 function applyBootstrapData(payload) {
   const projects = (Array.isArray(payload?.projects) ? payload.projects : []).map((p, i) => normalizeProject(p, i));
   if (!projects.length) return false;
-  projects.forEach(applyDemoWorkflowLayout);
+  projects.forEach((project) => {
+    applyDemoWorkflowLayout(project);
+    applyBundledDemoPdfs(project.modules);
+  });
 
   const publishedList = (Array.isArray(payload?.published) ? payload.published : []).map((s, i) => normalizeSnapshot(s, i));
+  publishedList.forEach((snapshot) => applyBundledDemoPdfs(snapshot.modules));
   const publishedMap = new Map();
   publishedList.forEach((s) => {
     let pid = Number(s.projectId);
@@ -435,6 +460,98 @@ async function loadBootstrapData() {
 
 const isBlobUrl = (src) => typeof src === "string" && src.startsWith("blob:");
 const isPersistableSrc = (src) => typeof src === "string" && (src.startsWith("/") || /^https?:\/\//i.test(src));
+
+function moduleMediaKey(projectId, moduleId) {
+  return `project-${Number(projectId)}-module-${Number(moduleId)}`;
+}
+
+function openMediaDb() {
+  if (!window.indexedDB) return Promise.resolve(null);
+  if (mediaDbPromise) return mediaDbPromise;
+  mediaDbPromise = new Promise((resolve, reject) => {
+    const request = window.indexedDB.open(MEDIA_DB_NAME, 1);
+    request.onupgradeneeded = () => {
+      const db = request.result;
+      if (!db.objectStoreNames.contains(MEDIA_STORE_NAME)) db.createObjectStore(MEDIA_STORE_NAME, { keyPath: "key" });
+    };
+    request.onsuccess = () => resolve(request.result);
+    request.onerror = () => reject(request.error || new Error("Could not open the browser media store"));
+  }).catch((err) => {
+    mediaDbPromise = null;
+    throw err;
+  });
+  return mediaDbPromise;
+}
+
+async function saveMediaToBrowser(key, file) {
+  const db = await openMediaDb();
+  if (!db) return false;
+  await new Promise((resolve, reject) => {
+    const tx = db.transaction(MEDIA_STORE_NAME, "readwrite");
+    tx.objectStore(MEDIA_STORE_NAME).put({
+      key,
+      blob: file,
+      name: String(file.name || "upload.bin"),
+      type: String(file.type || "application/octet-stream"),
+      savedAt: now(),
+    });
+    tx.oncomplete = resolve;
+    tx.onerror = () => reject(tx.error || new Error("Could not save the uploaded file in this browser"));
+    tx.onabort = () => reject(tx.error || new Error("Browser media storage was interrupted"));
+  });
+  return true;
+}
+
+async function readMediaFromBrowser(key) {
+  const db = await openMediaDb();
+  if (!db) return null;
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(MEDIA_STORE_NAME, "readonly");
+    const request = tx.objectStore(MEDIA_STORE_NAME).get(key);
+    request.onsuccess = () => resolve(request.result || null);
+    request.onerror = () => reject(request.error || new Error("Could not read the uploaded file from this browser"));
+  });
+}
+
+async function restoreMediaFromBrowser() {
+  const compiledItems = [];
+  state.projects.forEach((project) => project.modules.forEach((module) => {
+    if (module.compile?.data?.mediaKey) compiledItems.push(module.compile);
+  }));
+  state.published.forEach((snapshot) => snapshot.modules.forEach((module) => {
+    if (module.compile?.data?.mediaKey) compiledItems.push(module.compile);
+  }));
+
+  const objectUrls = new Map();
+  for (const compile of compiledItems) {
+    const data = compile.data;
+    const key = String(data.mediaKey || "");
+    if (!key) continue;
+    const serverSrc = isPersistableSrc(data.serverSrc)
+      ? String(data.serverSrc)
+      : (isPersistableSrc(data.src) ? String(data.src) : "");
+    if (serverSrc) data.serverSrc = serverSrc;
+    try {
+      if (!objectUrls.has(key)) {
+        const stored = await readMediaFromBrowser(key);
+        const url = stored?.blob instanceof Blob ? URL.createObjectURL(stored.blob) : "";
+        objectUrls.set(key, url);
+        if (url) state.objectUrls.add(url);
+      }
+      const restoredUrl = objectUrls.get(key);
+      if (restoredUrl) data.src = restoredUrl;
+      else if (serverSrc) data.src = serverSrc;
+      else {
+        compile.ready = false;
+        compile.summary = "Please re-upload the file";
+        compile.data = null;
+      }
+    } catch (err) {
+      console.warn("Could not restore uploaded media from browser storage", err);
+      if (serverSrc) data.src = serverSrc;
+    }
+  }
+}
 
 function revokeBlobUrl(src) {
   if (!isBlobUrl(src)) return;
@@ -525,8 +642,15 @@ function sanitizeCompileForStorage(contentType, compile) {
       data: { type: "ai_assistant", aiConfig: cfg },
     };
   }
-  if (["ppt", "video", "interactive"].includes(contentType) && compile.ready && isPersistableSrc(compile?.data?.src)) {
-    const data = { type: contentType, src: String(compile.data.src) };
+  const mediaKey = String(compile?.data?.mediaKey || "");
+  const runtimeSrc = String(compile?.data?.src || "");
+  const serverSrc = isPersistableSrc(compile?.data?.serverSrc)
+    ? String(compile.data.serverSrc)
+    : (isPersistableSrc(runtimeSrc) ? runtimeSrc : "");
+  if (["ppt", "video", "interactive"].includes(contentType) && compile.ready && (serverSrc || mediaKey)) {
+    const data = { type: contentType, src: serverSrc };
+    if (serverSrc) data.serverSrc = serverSrc;
+    if (mediaKey) data.mediaKey = mediaKey;
     if (contentType === "ppt") data.pages = Math.max(1, Number(compile?.data?.pages || 1));
     if (contentType === "video") data.duration = Number(compile?.data?.duration || 0);
     return { ready: true, summary: String(compile.summary || "Compiled"), data };
@@ -1117,8 +1241,18 @@ async function compileModule(project, m, file = m.file?.raw || null) {
 
   const prevSrc = m.file?.src;
   const preferServerUpload = ["ppt", "video", "interactive"].includes(m.contentType);
+  let mediaKey = "";
   let src = "";
   let usedServer = false;
+
+  if (preferServerUpload) {
+    try {
+      const key = moduleMediaKey(project.id, m.id);
+      if (await saveMediaToBrowser(key, file)) mediaKey = key;
+    } catch (err) {
+      console.warn("Could not save uploaded media in browser storage", err);
+    }
+  }
 
   if (preferServerUpload) {
     try {
@@ -1148,7 +1282,7 @@ async function compileModule(project, m, file = m.file?.raw || null) {
       try { pages = Math.max(1, ((await file.slice(0, Math.min(file.size, 2 * 1024 * 1024)).text()).match(/\/Type\s*\/Page\b/g) || []).length || 1); } catch {}
     }
     const suffix = usedServer ? "" : " (valid for this session)";
-    m.compile = { ready: true, summary: `Compiled: ${file.name} (about ${pages} pages)${suffix}`, data: { type: "ppt", src, pages } };
+    m.compile = { ready: true, summary: `Compiled: ${file.name} (about ${pages} pages)${suffix}`, data: { type: "ppt", src, pages, mediaKey, serverSrc: usedServer ? src : "" } };
   } else if (m.contentType === "video") {
     const duration = await new Promise((resolve) => {
       const v = document.createElement("video");
@@ -1161,12 +1295,12 @@ async function compileModule(project, m, file = m.file?.raw || null) {
       v.src = src;
     });
     const suffix = usedServer ? "" : " (valid for this session)";
-    m.compile = { ready: true, summary: `Compiled: ${file.name} (${duration ? duration.toFixed(1) : "unknown"} seconds)${suffix}`, data: { type: "video", src, duration } };
+    m.compile = { ready: true, summary: `Compiled: ${file.name} (${duration ? duration.toFixed(1) : "unknown"} seconds)${suffix}`, data: { type: "video", src, duration, mediaKey, serverSrc: usedServer ? src : "" } };
   } else if (m.contentType === "interactive") {
     const ext = String(file.name || "").toLowerCase().split(".").pop();
     if (!["html", "htm"].includes(ext)) throw new Error("Interactive modules only support HTML/HTM files");
     const suffix = usedServer ? "" : " (valid for this session)";
-    m.compile = { ready: true, summary: `Compiled: ${file.name}${suffix}`, data: { type: "interactive", src } };
+    m.compile = { ready: true, summary: `Compiled: ${file.name}${suffix}`, data: { type: "interactive", src, mediaKey, serverSrc: usedServer ? src : "" } };
   } else if (m.contentType === "quiz") {
     const quiz = await parseQuiz(file);
     m.compile = { ready: true, summary: `Compiled: ${quiz.questions.length} questions`, data: { type: "quiz", quiz } };
@@ -1706,6 +1840,7 @@ async function init() {
   const bootLoaded = localLoaded ? true : await loadBootstrapData();
   if (!bootLoaded) makeProject();
   if (localLoaded) {
+    await restoreMediaFromBrowser();
     state.projects.forEach((project) => {
       if (publishedMediaNeedsRefresh(project)) refreshPublishedProject(project);
     });

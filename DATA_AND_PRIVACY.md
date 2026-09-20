@@ -9,7 +9,7 @@ The public ClassPilot demonstration is intended for testing with non-sensitive e
 When ClassPilot runs on a local computer or school-managed server:
 
 - Course projects and settings are stored in the user's browser.
-- Uploaded files are stored in the deployment's local `uploads/` directory.
+- Uploaded lesson media is retained in the browser's local file database for refresh-safe playback. The running server also receives a copy in its local `uploads/` directory.
 - Access to the application and files is controlled by the deployment operator.
 - API keys are read from the server-side `.env` file and are not exposed to the browser.
 
