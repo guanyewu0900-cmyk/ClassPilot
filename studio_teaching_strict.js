@@ -441,6 +441,14 @@ function revokeBlobUrl(src) {
   try { URL.revokeObjectURL(src); } catch {}
 }
 
+function dropPdfCache(src) {
+  const key = String(src || "");
+  if (!key) return;
+  const cached = pdfRuntime.docs.get(key);
+  pdfRuntime.docs.delete(key);
+  try { cached?.doc?.destroy?.(); } catch {}
+}
+
 async function uploadFileToServer(file, contentType) {
   if (typeof window.fetch !== "function") throw new Error("This environment does not support the upload API");
   const name = encodeURIComponent(String(file.name || "upload.bin"));
@@ -1118,6 +1126,7 @@ async function compileModule(project, m, file = m.file?.raw || null) {
       src = uploaded.src;
       m.file = { raw: null, src, originalName: uploaded.originalName, mimeType: uploaded.mimeType };
       usedServer = true;
+      dropPdfCache(prevSrc);
       revokeBlobUrl(prevSrc);
     } catch (err) {
       src = URL.createObjectURL(file);
@@ -1178,6 +1187,30 @@ function snapshotOf(project, meta) {
     connections: project.connections.map((c) => ({ ...c })),
     sequence: buildSequence(project.modules, project.connections),
   };
+}
+
+function refreshPublishedProject(project) {
+  const previous = state.published.get(project.id);
+  if (!previous) return false;
+
+  const refreshed = snapshotOf(project, {
+    publishId: previous.publishId,
+    name: project.name,
+    description: project.description,
+    publishedAt: now(),
+    autoPlay: previous.autoPlay,
+    autoPlaySeconds: previous.autoPlaySeconds,
+  });
+  state.published.set(project.id, refreshed);
+
+  if (Number(state.teaching.snapshot?.projectId) === Number(project.id)) {
+    state.teaching.snapshot = refreshed;
+    if (!refreshed.modules.some((m) => Number(m.id) === Number(state.teaching.currentId))) {
+      state.teaching.currentId = firstId(refreshed);
+      state.teaching.history = [state.teaching.currentId].filter(Boolean);
+    }
+  }
+  return true;
 }
 
 function firstId(snapshot) { return playableModuleIds(snapshot)[0] || snapshot.sequence[0] || snapshot.modules[0]?.id || null; }
@@ -1909,8 +1942,12 @@ async function init() {
     if (!m || !f) return;
     try {
       await compileModule(p, m, f);
+      const refreshed = refreshPublishedProject(p);
       rerenderStudio();
-      alert(`Module "${m.moduleName}" uploaded and compiled successfully`);
+      renderTeachingList();
+      alert(refreshed
+        ? `Module "${m.moduleName}" uploaded successfully. The published course now uses the new file.`
+        : `Module "${m.moduleName}" uploaded and compiled successfully`);
     } catch (err) {
       m.compile = { ready: false, summary: `Compile failed: ${err.message}`, data: null };
       rerenderStudio();
