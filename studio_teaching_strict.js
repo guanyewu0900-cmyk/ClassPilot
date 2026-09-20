@@ -1213,6 +1213,19 @@ function refreshPublishedProject(project) {
   return true;
 }
 
+function publishedMediaNeedsRefresh(project) {
+  const published = state.published.get(project.id);
+  if (!published) return false;
+  const publishedById = new Map(published.modules.map((module) => [Number(module.id), module]));
+  return project.modules.some((module) => {
+    if (!["ppt", "video", "interactive"].includes(module.contentType)) return false;
+    const currentSrc = String(module.compile?.data?.src || "");
+    if (!module.compile?.ready || !isPersistableSrc(currentSrc)) return false;
+    const publishedSrc = String(publishedById.get(Number(module.id))?.compile?.data?.src || "");
+    return currentSrc !== publishedSrc;
+  });
+}
+
 function firstId(snapshot) { return playableModuleIds(snapshot)[0] || snapshot.sequence[0] || snapshot.modules[0]?.id || null; }
 
 function renderQuiz(container, module, answersBag, resultBag, key) {
@@ -1692,6 +1705,11 @@ async function init() {
   const localLoaded = forceBootstrap ? false : loadLocalState();
   const bootLoaded = localLoaded ? true : await loadBootstrapData();
   if (!bootLoaded) makeProject();
+  if (localLoaded) {
+    state.projects.forEach((project) => {
+      if (publishedMediaNeedsRefresh(project)) refreshPublishedProject(project);
+    });
+  }
   rerenderStudio();
   renderTeachingList();
 
