@@ -15,7 +15,7 @@ services:
       - key: CHATANYWHERE_DEEPSEEK_CHAT_MODEL
         value: deepseek-chat
       - key: CHATANYWHERE_DEEPSEEK_REASONER_MODEL
-        value: deepseek-reasoner
+        value: deepseek-r1
       - key: CHATANYWHERE_OPENAI_MODEL
         value: gpt-5.6-sol
       - key: CHATANYWHERE_CLAUDE_MODEL

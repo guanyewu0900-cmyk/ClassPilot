@@ -41,7 +41,7 @@ const AI_MODELS = {
     protocol: "openai",
     baseUrl: CHATANYWHERE_BASE_URL,
     apiKey: CHATANYWHERE_API_KEY,
-    model: process.env.CHATANYWHERE_DEEPSEEK_REASONER_MODEL || "deepseek-reasoner",
+    model: process.env.CHATANYWHERE_DEEPSEEK_REASONER_MODEL || "deepseek-r1",
     keyName: "CHATANYWHERE_API_KEY",
   },
   openai: {
