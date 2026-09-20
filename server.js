@@ -856,6 +856,30 @@ function joinApiUrl(baseUrl, endpoint) {
   return `${String(baseUrl || "").replace(/\/+$/, "")}/${String(endpoint || "").replace(/^\/+/, "")}`;
 }
 
+async function handleAiModels(req, res) {
+  if (!CHATANYWHERE_API_KEY) {
+    sendJson(res, 503, { error: "CHATANYWHERE_API_KEY is not configured" });
+    return;
+  }
+  try {
+    const upstream = await fetch(joinApiUrl(CHATANYWHERE_BASE_URL, "models"), {
+      headers: { Authorization: `Bearer ${CHATANYWHERE_API_KEY}` },
+    });
+    let data = {};
+    try { data = await upstream.json(); } catch {}
+    if (!upstream.ok) {
+      const detail = data?.error?.message || data?.error || `HTTP ${upstream.status}`;
+      throw new Error(`ChatAnywhere returned an error: ${detail}`);
+    }
+    const models = Array.isArray(data?.data)
+      ? data.data.map((item) => String(item?.id || "")).filter(Boolean).sort()
+      : [];
+    sendJson(res, 200, { ok: true, models });
+  } catch (err) {
+    sendJson(res, 502, { error: err.message || "Failed to list ChatAnywhere models" });
+  }
+}
+
 async function callOpenAiCompatible(config, messages) {
   const upstream = await fetch(joinApiUrl(config.baseUrl, "chat/completions"), {
     method: "POST",
@@ -1035,6 +1059,10 @@ const server = http.createServer((req, res) => {
   }
   if (req.method === "POST" && req.url.startsWith("/api/ai/chat")) {
     handleAiChat(req, res);
+    return;
+  }
+  if (req.method === "GET" && req.url.startsWith("/api/ai/models")) {
+    handleAiModels(req, res);
     return;
   }
   if (req.method !== "GET") {
