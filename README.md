@@ -62,7 +62,7 @@ All interface options use ChatAnywhere. The API key remains on the server and is
 | `CHATANYWHERE_API_KEY` | The single server-side secret used by every model | Required |
 | `CHATANYWHERE_BASE_URL` | ChatAnywhere API base URL | `https://api.chatanywhere.tech/v1` |
 | `CHATANYWHERE_DEEPSEEK_CHAT_MODEL` | DeepSeek Chat model ID | `deepseek-chat` |
-| `CHATANYWHERE_DEEPSEEK_REASONER_MODEL` | DeepSeek Reasoner model ID | `deepseek-r1` |
+| `CHATANYWHERE_DEEPSEEK_REASONER_MODEL` | DeepSeek Reasoner model ID | `deepseek-v3.2-thinking` |
 | `CHATANYWHERE_OPENAI_MODEL` | ChatGPT model ID | `gpt-5.6-sol` |
 | `CHATANYWHERE_CLAUDE_MODEL` | Claude model ID | `claude-sonnet-4-6` |
 | `CHATANYWHERE_KIMI_MODEL` | Kimi model ID | `kimi-k2.5` |
