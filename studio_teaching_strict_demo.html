@@ -194,7 +194,7 @@
         min-height: 0;
         padding: 16px 20px 12px;
         display: grid;
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: 1fr auto;
       }
       body.teaching-fullscreen-mode #teachingPlayerArea {
         min-height: 0;
@@ -218,6 +218,9 @@
       body.teaching-playback-mode #teachingDemoSection.active .teaching-demo-shell > .teaching-demo-card:first-child {
         display: none;
       }
+      body.teaching-playback-mode #teachingDemoSection.active .teaching-player-heading {
+        display: none;
+      }
       body.teaching-playback-mode #teachingDemoSection.active .teaching-demo-shell > .teaching-demo-card:last-child {
         border: 0;
         border-radius: 0;
@@ -226,7 +229,7 @@
         min-height: 100vh;
         background: #030916;
         display: grid;
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: 1fr auto;
       }
       body.teaching-playback-mode #teachingDemoSection.active #teachingPlayerArea {
         min-height: 0;
@@ -252,7 +255,7 @@
         min-height: 100vh;
         padding: 10px 12px 10px;
         display: grid;
-        grid-template-rows: auto 1fr auto;
+        grid-template-rows: 1fr auto;
         gap: 8px;
       }
       body.teaching-pdf-focus #teachingDemoSection.active #teachingPlayerArea {
@@ -495,7 +498,7 @@
           <div class="teaching-demo-list" id="teachingProjectList"></div>
         </article>
         <article class="teaching-demo-card">
-          <div class="row" style="justify-content: space-between; align-items: center;">
+          <div class="row teaching-player-heading" style="justify-content: space-between; align-items: center;">
             <h2 class="section-title" style="margin: 0;" id="teachingPlayerTitle">Classroom Player</h2>
             <div class="muted-text" id="teachingPlayerStep"></div>
           </div>
